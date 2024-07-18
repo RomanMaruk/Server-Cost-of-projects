@@ -1,25 +1,38 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import mainCategoriesModel from '../models/main-categories.model';
+import { Categories } from '../enums/categories.enum';
 
-export const getAllMainCategories = (req: Request, res: Response) => {
+export const getAllMainCategories = async (req: Request, res: Response) => {
   // const requst = JSON.stringify(req);
-  console.log(req.query);
-  console.log(req.body);
-  res.status(StatusCodes.OK).json({ фундамент: 'Фундамент' });
+  const allCategories = await mainCategoriesModel.find();
+  console.log(allCategories);
+
+  res.json(allCategories);
 };
-export const createMainCategory = (req: Request, res: Response) => {
-  const some = Object.values(req.body).some((e) => e === 'wall');
-  if (some) {
-    res.status(StatusCodes.CONFLICT).json({ message: 'Such categoriew exist' });
-    console.log('error');
+export const createMainCategory = async (req: Request, res: Response) => {
+  const category = req.body.name;
+
+  const isExist = await mainCategoriesModel.findOne({
+    name: category,
+  });
+  if (!isExist) {
+    const cat = await mainCategoriesModel.create({
+      name: category,
+    });
+    const body = { message: 'Success', ...cat };
+    res.status(StatusCodes.ACCEPTED).json(cat);
   } else {
-    const body = { message: 'Success', ...req.body };
-    res.json(body);
+    res.status(StatusCodes.CONFLICT).json({ error: 'Such category exist' });
   }
 };
-export const editMainCategory = (req: Request, res: Response) => {
-  console.log(req.body);
+export const editMainCategory = async (req: Request, res: Response) => {
+  const { id, name } = req.body;
+  const edited = await mainCategoriesModel.findById(id).updateOne({ name });
+  res.status(StatusCodes.OK).json(edited);
 };
-export const deleteMainCategory = (req: Request, res: Response) => {
-  console.log(req.body);
+export const deleteMainCategory = async (req: Request, res: Response) => {
+  const { id, name } = req.body;
+  const deleted = await mainCategoriesModel.deleteOne({ _id: id });
+  res.status(StatusCodes.OK).json({ deleted, id, name });
 };

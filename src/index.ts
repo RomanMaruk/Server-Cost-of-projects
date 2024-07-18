@@ -1,6 +1,7 @@
 import express from 'express';
 import { route as categoryRoute } from './routes/main-categories.route';
 import { config } from 'dotenv';
+import { connectDB } from './db/connect';
 
 config();
 const app = express();
@@ -13,6 +14,11 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1', categoryRoute);
 
-app.listen(PORT, () => {
-  console.log(`Port lisent on port ${PORT}`);
-});
+const start = async () => {
+  await connectDB(process.env.MONGO_URI as string);
+  app.listen(PORT, () => {
+    console.log(`Port lisent on port ${PORT}`);
+  });
+};
+
+start();

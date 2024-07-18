@@ -1,8 +1,10 @@
 import express from 'express';
 import { route as categoryRoute } from './routes/main-categories.route';
+import { config } from 'dotenv';
 
+config();
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 app.use(express.json());
 
 app.get('/', (req, res) => {

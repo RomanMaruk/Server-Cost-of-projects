@@ -23,5 +23,3 @@ export const editMainCategory = (req: Request, res: Response) => {
 export const deleteMainCategory = (req: Request, res: Response) => {
   console.log(req.body);
 };
-
-// check git/
